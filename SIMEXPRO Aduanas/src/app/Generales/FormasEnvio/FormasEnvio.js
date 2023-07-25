@@ -27,7 +27,9 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-
+import { Controller, useForm,FormState} from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 function FormaDeEnvioIndex() {
   const [searchText, setSearchText] = useState('');
@@ -38,6 +40,28 @@ function FormaDeEnvioIndex() {
   const DialogEliminar = () => {
     setEliminar(!Eliminar);
   };
+
+  const Form1Schema = yup.object().shape({
+    FormaEnvio: yup
+    .string()
+    .transform((value) => value.trim()) // Transformación para eliminar espacios al principio y al final
+    .required('Este campo es obligatorio')
+  })
+
+  const { handleSubmit, register, reset, control, watch, formState,    formState: { errors }} = useForm({
+    mode: 'all',
+    resolver: yupResolver(Form1Schema),
+  });
+
+  const onSubmit = data => {
+    if(isValid){
+      VisibilidadTabla()
+    }
+    console.log(JSON.stringify(data))
+  };
+
+  const { isValid, dirtyFields, touchedFields } = formState;
+  const data = watch();
 
   {/* Columnas de la tabla */ }
   const columns = [
@@ -121,6 +145,7 @@ function FormaDeEnvioIndex() {
   const VisibilidadTabla = () => {
     setmostrarIndex(!mostrarIndex);
     setmostrarAdd(!mostrarAdd);
+    reset()
   };
 
   const handleSearchChange = (event) => {
@@ -204,20 +229,31 @@ function FormaDeEnvioIndex() {
 
 
       {/* Formulario Agregar */}
-      <Collapse in={mostrarAdd}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+            <Collapse in={mostrarAdd}>
         <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <Grid container spacing={3}>
 
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}
                  style={{ marginTop: '30px' }}>
-                <FormControl>
-                    <TextField
+                  <Controller
+                    render={({field}) =>(
+                        <TextField
+                        {...field}
+                        error={!!errors.FormaEnvio}
+                        helperText={errors?.FormaEnvio?.message}
                         style={{ borderRadius: '10px', width: '500px' }}
                         label="Forma de envío"
-                        defaultValue=' '
-
+                        defaultValue=''
+                        onChange={(e) => {
+                          if(e.target.value == " "){
+                            e.target.value = ""
+                        }}}
                     />
-                </FormControl>
+                    )}
+                    name="FormaEnvio"
+                    control={control}
+              />
             </Grid>
 
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'right', alignItems: 'right' }} >
@@ -230,7 +266,7 @@ function FormaDeEnvioIndex() {
                   backgroundColor: '#634A9E', color: 'white',
                   "&:hover": { backgroundColor: '#6e52ae' },
                 }}
-                onClick={VisibilidadTabla}
+                type='submit'
               >
                 Guardar
               </Button>
@@ -253,6 +289,7 @@ function FormaDeEnvioIndex() {
           </Grid>
         </CardContent>
       </Collapse>
+            </form>
 
 
       <Dialog
