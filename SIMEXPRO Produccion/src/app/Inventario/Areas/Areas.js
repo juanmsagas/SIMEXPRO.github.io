@@ -88,7 +88,7 @@ function AreasIndex() {
     title: 'Àrea',
     dataIndex: 'areas',
     key: 'areas',
-    sorter: (a, b) => a.rtn.localeCompare(b.rtn), //sorting para Letras
+    sorter: (a, b) => a.areas.localeCompare(b.areas), //sorting para Letras
   },
   {
     title: 'Acciones',
@@ -131,7 +131,7 @@ function AreasIndex() {
 
   {/*Datos de la tabla*/  }
   const data = [];
-  for (let i = 0; i < 50; ++i) {
+  for (let i = 1; i < 51; ++i) {
     data.push({
       key: i.toString(),
       id: i.toString(),
