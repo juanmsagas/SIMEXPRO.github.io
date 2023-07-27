@@ -26,6 +26,7 @@
         "@mui/x-data-grid": "5.15.2",
         "@mui/x-date-pickers": "5.0.0-beta.6",
         "@reduxjs/toolkit": "1.8.5",
+        "antd": "^5.7.3",
         "apexcharts": "3.35.4",
         "autosuggest-highlight": "3.3.4",
         "axios": "0.27.2",
