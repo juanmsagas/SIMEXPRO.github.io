@@ -264,9 +264,11 @@ function ModuloIndex() {
     setSearchText(event.target.value);
   };
 
-  {/* Filtrado de datos */ }
-  const filteredRows = rows.filter((row) =>
-    row.modulo.toLowerCase().includes(searchText.toLowerCase())
+    {/*Filtrado de datos*/  }
+    const filteredRows = rows.filter((row) =>
+    Object.values(row).some((value) =>
+      typeof value === 'string' && value.toLowerCase().includes(searchText.toLowerCase())
+    )
   );
 
   return (

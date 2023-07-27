@@ -359,14 +359,9 @@ function AreasIndex() {
                 ),
               }}
             />
-
           </Stack>
-
         </CardContent>
       </Collapse>
-
-
-
 
 
 
@@ -376,10 +371,6 @@ function AreasIndex() {
 
           <Table
             columns={columns}
-            // expandable={{
-            //   expandedRowRender: (record) => <Table columns={columns} dataSource={record.tabla} pagination={false} />,
-            //   rowExpandable: (record) => record.name !== 'Not Expandable',
-            // }}
             dataSource={filteredRows}
             size="small"
             pagination={{
