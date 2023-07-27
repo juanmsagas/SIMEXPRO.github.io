@@ -131,7 +131,7 @@ function AreasIndex() {
 
   {/*Datos de la tabla*/  }
   const data = [];
-  for (let i = 0; i < 50; ++i) {
+  for (let i = 1; i < 51; ++i) {
     data.push({
       key: i.toString(),
       id: i.toString(),
