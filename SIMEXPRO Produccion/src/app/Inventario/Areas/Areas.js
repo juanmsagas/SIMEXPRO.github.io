@@ -8,7 +8,6 @@ import Stack from '@mui/material/Stack';
 import { DataGrid, GridToolbar, esES } from '@mui/x-data-grid'
 import React, { useState, useEffect } from 'react'
 import SearchIcon from '@mui/icons-material/Search';
-import MUIDataTable from 'mui-datatables' 
 import Collapse from '@mui/material/Collapse';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -76,7 +75,7 @@ function AreasIndex() {
 
 
   const [anchorEl, setAnchorEl] = useState({});
- /*Columnas de la tabla*/
+ /Columnas de la tabla/
  const columns = [
   {
     title: 'ID',
@@ -129,7 +128,7 @@ function AreasIndex() {
   },
 ];
 
-  {/*Datos de la tabla*/  }
+  {/Datos de la tabla/  }
   const data = [];
   for (let i = 0; i < 50; ++i) {
     data.push({
@@ -155,7 +154,7 @@ function AreasIndex() {
   };
 
 
-  {/*Filtrado de datos*/  }
+  {/Filtrado de datos/  }
   const filteredRows = data.filter((row) =>
     Object.values(row).some((value) =>
       typeof value === 'string' && value.toLowerCase().includes(searchText.toLowerCase())
@@ -370,7 +369,7 @@ function AreasIndex() {
 
 
 
-      {/*Tabla*/}
+      {/Tabla/}
       <Collapse in={mostrarIndex}>
         <div className='center' style={{ width: '95%', margin: 'auto' }}>
 
@@ -575,6 +574,3 @@ function AreasIndex() {
 }
 
 export default AreasIndex;
-
-
-
