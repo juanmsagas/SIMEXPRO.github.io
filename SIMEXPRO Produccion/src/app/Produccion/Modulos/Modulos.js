@@ -30,7 +30,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import FormLabel from "@mui/material/FormLabel";
-
+import { DownOutlined } from '@ant-design/icons';
+import { Badge, Dropdown, Space, Table } from 'antd';
+import { keyBy } from 'lodash';
 
 function ModuloIndex() {
   const [searchText, setSearchText] = useState('');
@@ -38,9 +40,42 @@ function ModuloIndex() {
   const [mostrarAdd, setmostrarAdd] = useState(false);
   const [mostrarEdit, setmostrarEdit] = useState(false);
   const [Eliminar, setEliminar] = useState(false);
+  const [filas, setFilas] = React.useState(10);
+  const [id, setid] = useState('')
+  const [modulos, setmodulos] = useState('')
+
+  const VisibilidadTablaEdit = () => {
+    setmostrarIndex(!mostrarIndex);
+    setmostrarEdit(!mostrarEdit);
+  };  
 
   const DialogEliminar = () => {
     setEliminar(!Eliminar);
+  };
+
+  const handleClose = (id) => {
+    setAnchorEl(prevState => ({
+      ...prevState,
+      [id]: null,
+    }));
+  };
+
+  const handleEdit = (id,modulos) => {
+    setmodulos(modulos);
+    setid(id);
+    console.log(modulos);
+    VisibilidadTablaEdit();               
+    handleClose(id);
+  };
+
+  const handleDetails = (id) => {
+    // Lógica para manejar la visualización de detalles de la fila con el ID proporcionado
+    handleClose(id);
+  };
+
+  const handleDelete = (id) => {
+    DialogEliminar();
+    handleClose(id);
   };
 
   {/* Función para mostrar la tabla y mostrar editar */ }
@@ -49,101 +84,174 @@ function ModuloIndex() {
     setmostrarEdit(!mostrarEdit);
   };
 
-  {/* Columnas de la tabla */ }
-  const columns = [
-    { field: 'id', headerName: 'Id', width: 200 },
-    { field: 'proceso', headerName: 'Proceso', flex: 2 },
-    { field: 'empleado', headerName: 'Supervisor', flex: 2 },
-    {
-      field: 'acciones',
-      headerName: 'Acciones',
-      flex: 1,
-      renderCell: (params) => {
-        const [anchorEl, setAnchorEl] = React.useState(null);
+  const handleClick = (event, id) => {
+    setAnchorEl(prevState => ({
+      ...prevState,
+      [id]: event.currentTarget,
+    }));
+  };
 
-        const handleClick = (event) => {
-          setAnchorEl(event.currentTarget);
-        };
+  // {/* Columnas de la tabla */ }
+  // const columns = [
+  //   { field: 'id', headerName: 'Id', width: 200 },
+  //   { field: 'proceso', headerName: 'Proceso', flex: 2 },
+  //   { field: 'empleado', headerName: 'Supervisor', flex: 2 },
+  //   {
+  //     field: 'acciones',
+  //     headerName: 'Acciones',
+  //     flex: 1,
+  //     renderCell: (params) => {
+  //       const [anchorEl, setAnchorEl] = React.useState(null);
 
-        const handleClose = () => {
-          setAnchorEl(null);
-        };
+  //       const handleClick = (event) => {
+  //         setAnchorEl(event.currentTarget);
+  //       };
 
-        const handleEdit = () => {
-          VisibilidadTablaEditar()
-          handleClose();
-        };
+  //       const handleClose = () => {
+  //         setAnchorEl(null);
+  //       };
 
-        const handleDetails = () => {
-          // Implementa la función para detalles aquí
-          handleClose();
-        };
+  //       const handleEdit = () => {
+  //         VisibilidadTablaEditar()
+  //         handleClose();
+  //       };
 
-        const handleDelete = () => {
-          // Implementa la función para eliminar aquí
-          handleClose();
-        };
+  //       const handleDetails = () => {
+  //         // Implementa la función para detalles aquí
+  //         handleClose();
+  //       };
 
-        const handlePrint = () => {
-          // Implementa la función para imprimir aquí
+  //       const handleDelete = () => {
+  //         // Implementa la función para eliminar aquí
+  //         handleClose();
+  //       };
 
-          handleClose();
-        };
+  //       const handlePrint = () => {
+  //         // Implementa la función para imprimir aquí
 
-        const handleBoletin = () => {
-          // Implementa la función para imprimir aquí
-          handleClose();
-        };
+  //         handleClose();
+  //       };
 
-        return (
-          <Stack direction="row" spacing={1}>
-            <Button
-              aria-controls={`menu-${params.id}`}
-              aria-haspopup="true"
-              onClick={handleClick}
-              variant="contained"
-              style={{ borderRadius: '10px', backgroundColor: '#634A9E', color: 'white' }}
-              startIcon={<Icon>menu</Icon>}
-            >
-              Opciones
-            </Button>
-            <Menu
-              id={`menu-${params.id}`}
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-            >
-              <MenuItem onClick={handleEdit}>
-                <Icon>edit</Icon>ㅤEditar
-              </MenuItem>
-              <MenuItem onClick={handleDetails}>
-                <Icon>visibility</Icon>ㅤDetalles
-              </MenuItem>
-              <MenuItem onClick={handleDelete}>
-                <Icon>delete</Icon>ㅤEliminar
-              </MenuItem>
-              <MenuItem onClick={handlePrint}>
-                <Icon>print</Icon>ㅤImprimir
-              </MenuItem>
-              {true && (
-                <MenuItem onClick={handleBoletin}>
-                  <Icon>insert_drive_file</Icon>ㅤGenerar Boletin
-                </MenuItem>
-              )}
-            </Menu>
-          </Stack>
-        );
-      },
-    },
-  ];
+  //       const handleBoletin = () => {
+  //         // Implementa la función para imprimir aquí
+  //         handleClose();
+  //       };
+
+  //       return (
+  //         <Stack direction="row" spacing={1}>
+  //           <Button
+  //             aria-controls={`menu-${params.id}`}
+  //             aria-haspopup="true"
+  //             onClick={handleClick}
+  //             variant="contained"
+  //             style={{ borderRadius: '10px', backgroundColor: '#634A9E', color: 'white' }}
+  //             startIcon={<Icon>menu</Icon>}
+  //           >
+  //             Opciones
+  //           </Button>
+  //           <Menu
+  //             id={`menu-${params.id}`}
+  //             anchorEl={anchorEl}
+  //             keepMounted
+  //             open={Boolean(anchorEl)}
+  //             onClose={handleClose}
+  //           >
+  //             <MenuItem onClick={handleEdit}>
+  //               <Icon>edit</Icon>ㅤEditar
+  //             </MenuItem>
+  //             <MenuItem onClick={handleDetails}>
+  //               <Icon>visibility</Icon>ㅤDetalles
+  //             </MenuItem>
+  //             <MenuItem onClick={handleDelete}>
+  //               <Icon>delete</Icon>ㅤEliminar
+  //             </MenuItem>
+  //             <MenuItem onClick={handlePrint}>
+  //               <Icon>print</Icon>ㅤImprimir
+  //             </MenuItem>
+  //             {true && (
+  //               <MenuItem onClick={handleBoletin}>
+  //                 <Icon>insert_drive_file</Icon>ㅤGenerar Boletin
+  //               </MenuItem>
+  //             )}
+  //           </Menu>
+  //         </Stack>
+  //       );
+  //     },
+  //   // },
+  // ]; 
+
+  const [anchorEl, setAnchorEl] = useState({});
+ /*Columnas de la tabla*/
+ const columns = [
+  {
+    title: 'ID',
+    dataIndex: 'id',
+    key: 'id',
+    sorter: (a, b) => a.id - b.id, //sorting para Numeros
+  },
+  {
+    title: 'Modulo',
+    dataIndex: 'modulo',
+    key: 'modulo',
+    sorter: (a, b) => a.modulo.localeCompare(b.modulo), //sorting para Letras
+  },
+ {
+  title: 'Proceso',
+    dataIndex: 'proceso',
+    key: 'proceso',
+    sorter: (a, b) => a.proceso.localeCompare(b.proceso), //sorting para Letras
+ },
+ {
+  title: 'Empleado',
+    dataIndex: 'empleado',
+    key: 'empleado',
+    sorter: (a, b) => a.empleado.localeCompare(b.empleado), //sorting para Letras
+ },
+  {
+    title: 'Acciones',
+    key: 'operation',
+    render: (params) =>
+      <div key={params.id}>
+        <Stack direction="row" spacing={1}>
+          <Button
+            aria-controls={`menu-${params.id}`}
+            aria-haspopup="true"
+            onClick={(e) => handleClick(e, params.id)}
+            variant="contained"
+            style={{ borderRadius: '10px', backgroundColor: '#634A9E', color: 'white' }}
+            startIcon={<Icon>menu</Icon>}
+          >
+            Opciones
+          </Button>
+          <Menu
+            id={`menu-${params.id}`}
+            anchorEl={anchorEl[params.id]}
+            keepMounted
+            open={Boolean(anchorEl[params.id])}
+            onClose={() => handleClose(params.id)}
+          >
+            <MenuItem onClick={() => handleEdit(params.id, params.areas)}>
+              <Icon>edit</Icon> Editar
+            </MenuItem>
+            <MenuItem onClick={() => handleDetails(params.id)}>
+              <Icon>visibility</Icon> Detalles
+            </MenuItem>
+            <MenuItem onClick={() => handleDelete(params.id)}>
+              <Icon>delete</Icon> Eliminar
+            </MenuItem>
+          </Menu>
+        </Stack>
+      </div>
+    ,
+  },
+];
 
   {/* Datos de la tabla */ }
   const rows = [
-    { id: '1', modulo: 'M9862ON', proceso: 'Corte', empleado: 'Junior Mario Loaiza' },
-    { id: '2', modulo: 'M9562ON', proceso: 'Ensamblaje', empleado: 'Junior Mario Loaiza' },
-    { id: '3', modulo: 'M9362ON', proceso: 'Serigrafía', empleado: 'Junior Mario Loaiza' },
-    { id: '4', modulo: 'M2862ON', proceso: 'Estampado', empleado: 'Junior Mario Loaiza' },
+    {key:1, id: '1', modulo: 'M9862ON', proceso: 'Corte', empleado: 'Junior Mario Loaiza' },
+    {key:2, id: '2', modulo: 'M9562ON', proceso: 'Ensamblaje', empleado: 'Junior Mario Loaiza' },
+    {key:3, id: '3', modulo: 'M9362ON', proceso: 'Serigrafía', empleado: 'Junior Mario Loaiza' },
+    {key:4, id: '4', modulo: 'M2862ON', proceso: 'Estampado', empleado: 'Junior Mario Loaiza' },
   ];
 
   {/* Función para mostrar la tabla y mostrar agregar */ }
@@ -214,27 +322,26 @@ function ModuloIndex() {
 
 
 
+ {/*Tabla*/}
+ <Collapse in={mostrarIndex}>
+        <div className='center' style={{ width: '95%', margin: 'auto' }}>
 
-      {/* Tabla */}
-      <Collapse in={mostrarIndex}>
-        <div style={{ height: 400, width: '100%', marginLeft: '13px', marginRight: '13px' }}>
-          <DataGrid
-            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-            components={{
-              Toolbar: GridToolbar,
-              Search: SearchIcon,
-            }}
-            rows={filteredRows}
+          <Table
             columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 10 },
-              },
+            // expandable={{
+            //   expandedRowRender: (record) => <Table columns={columns} dataSource={record.tabla} pagination={false} />,
+            //   rowExpandable: (record) => record.name !== 'Not Expandable',
+            // }}
+            dataSource={filteredRows}
+            size="small"
+            pagination={{
+              pageSize: filas
+              , className: 'decoration-white'
             }}
-            pageSizeOptions={[10, 20, 50]}
+
           />
         </div>
-      </Collapse>
+        </Collapse>
 
 
 
