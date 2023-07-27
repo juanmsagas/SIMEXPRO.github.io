@@ -222,7 +222,6 @@ const handleChange = (event) => {
     reset(defaultAccountValues);
   };
 
-
   const {handleSubmit, register, reset, control, watch, formState } = useForm({
     defaultAccountValues,
     mode: 'all',
@@ -265,7 +264,7 @@ const handleChange = (event) => {
         }); 
       } else {
 
-        VisibilidadTabla();
+        VisibilidadTablaEditar();
         Toast2.fire({
           icon: 'success',
           title: 'Dato Editado exitosamente',
