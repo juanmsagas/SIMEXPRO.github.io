@@ -9,6 +9,11 @@ import Stack from '@mui/material/Stack';
 import { DataGrid, GridToolbar, esES } from '@mui/x-data-grid'
 import { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
+import {
+  Form as Forma,
+  Upload,
+} from 'antd';
+
 
 import Zoom from '@mui/material/Zoom';
 import Grow from '@mui/material/Grow';
@@ -135,19 +140,19 @@ function UsuariosIndex() {
       title: 'Usuario',
       dataIndex: 'usuario',
       key: 'usuario',
-      sorter: (a, b) => a.usuario.lenght - b.usuario.lenght,
+      sorter: (a, b) => a.usuario.localeCompare(b.usuario),
     },
     {
       title: 'Empleado',
       dataIndex: 'empleado',
       key: 'empleado',
-      sorter: (a, b) => a.empleado - b.empleado,
+      sorter: (a, b) => a.empleado.localeCompare(b.rtn),
     },
     {
       title: 'Rol',
       dataIndex: 'rol',
       key: 'rol',
-      sorter: (a, b) => a.rol - b.rol,
+      sorter: (a, b) => a.rol.localeCompare(b.rol),
     },
     {
       title: 'Acciones',
@@ -304,8 +309,7 @@ function UsuariosIndex() {
             dataSource={filteredRows}
             size="small"
             pagination={{
-              pageSize: filas
-              , className: 'decoration-white'
+              pageSize: filas,
             }}
 
           />
@@ -319,7 +323,7 @@ function UsuariosIndex() {
           <Grid container spacing={3}>
             {/* Botón para agregar imagen */}
             <Grid item xs={4} style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <button
+              {/* <button
                 style={{
                   width: '25rem', // Set the desired width for the square button
                   height: '25rem', // Set the same value for height to make it square
@@ -332,18 +336,24 @@ function UsuariosIndex() {
                 }}
               >
                 <Icon style={{ marginRight: '5px' }}>add_photo_alternate</Icon> Agregar Imagen
-              </button>
+              </button> */}
+              
+              <Upload action="/upload.do" listType="picture-card" multiple="false">
+            <div>
+              {/* <PlusOutlined /> */}
+              <div
+                style={{
+                  marginTop: 8,
+                }}
+              >
+                Upload
+              </div>
+            </div>
+          </Upload>
+
             </Grid>
 
-            {/* Right column for all the TextField  InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-
-                        </InputAdornment>
-                      ),
-
-                    }}
-s */}
+           
             <Grid item xs={8} style={{ marginTop: '30px' }}>
               <Grid container spacing={3}>
                 {/* Etiqueta "Nuevo Usuario" */}

@@ -138,11 +138,13 @@ function OficionesProfesionesIndex() {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
+      sorter: (a, b) => a.id - b.id,
     },
     {
       title: 'Nombre',
       dataIndex: 'nombre',
       key: 'nombre',
+      sorter: (a, b) => a.nombre.localeCompare(b.nombre),
     },
     {
       title: 'Acciones',
