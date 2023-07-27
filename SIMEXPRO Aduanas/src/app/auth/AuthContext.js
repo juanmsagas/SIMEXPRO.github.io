@@ -15,7 +15,7 @@ function AuthProvider({ children }) {
 
   useEffect(() => {
     jwtService.on('onAutoLogin', () => {
-      dispatch(showMessage({ message: 'Signing in with JWT' }));
+      // dispatch(showMessage({ message: 'Signing in with JWT' }));
 
       /**
        * Sign in and retrieve user data with stored token
@@ -31,11 +31,16 @@ function AuthProvider({ children }) {
     });
 
     jwtService.on('onLogin', (user) => {
-      success(user, 'Signed in');
+      success(user, '¡Bienvenido!');
     });
 
     jwtService.on('onLogout', () => {
-      pass('Signed out');
+      // pass('Sesión cerrada');
+      Toast.fire({
+        icon: 'info',
+        title: 'Sesión cerrada',
+      });
+
 
       dispatch(logoutUser());
     });
