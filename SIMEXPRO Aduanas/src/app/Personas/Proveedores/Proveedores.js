@@ -38,70 +38,281 @@ import RadioGroup from '@mui/material/RadioGroup'
 import Radio from '@mui/material/Radio'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
+import { DownOutlined } from '@ant-design/icons';
+import { Badge, Dropdown, Space, Table } from 'antd';
+import { keyBy } from 'lodash';
+
 function ProveedoresIndex() {
   const [searchText, setSearchText] = useState('');
   const [mostrarIndex, setmostrarIndex] = useState(true);
   const [mostrarAdd, setmostrarAdd] = useState(false);
   const [Eliminar, setEliminar] = useState(false);
 
+  const [nombre, setNombre] = useState('');
+  const [contacto, setContacto] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [ciudad, setCiudad] = useState('');
+  const [isNombreValid, setIsNombreValid] = useState(true);
+  const [isContactoValid, setIsContactoValid] = useState(true);
+  const [isTelefonoValid, setIsTelefonoValid] = useState(true);
+  const [isCiudadValid, setIsCuidadValid] = useState(true);
+
+  const handleGuardarClick = () => {
+    let valid = true;
+    if (oficina.trim() === '') {
+      setIsNombreValid(false);
+      valid = false;
+    }
+    if (oficina.trim() === '') {
+      setIsContactoValid(false);
+      valid = false;
+    }
+    if (oficina.trim() === '') {
+      setIsTelefonoValid(false);
+      valid = false;
+    }
+    if (oficina.trim() === '') {
+      setIsCiudadValid(false);
+      valid = false;
+    }
+    if (valid) {
+      // Your logic to save data when all fields are valid
+      // console.log('Data saved!');
+      // Reset the form
+      setCargo('');
+    }
+  };
+
+  const [anchorEl, setAnchorEl] = useState({});
+
+  const handleClick = (event, id) => {
+    setAnchorEl(prevState => ({
+      ...prevState,
+      [id]: event.currentTarget,
+    }));
+  };
+
+  const handleClose = (id) => {
+    setAnchorEl(prevState => ({
+      ...prevState,
+      [id]: null,
+    }));
+  };
+
+  const handleEdit = () => {
+    // Implementa la función para editar aquí
+    handleClose();
+  };
+
+  const handleDetails = () => {
+      // Implementa la función para detalles aquí
+      handleClose();
+  };
+
+  const handleDelete = () => {
+    // Implementa la función para eliminar aquí
+    handleClose();
+  };
+
   const DialogEliminar = () => {
     setEliminar(!Eliminar);
   };
 
-  {/* Columnas de la tabla */ }
-  const columns = [
-    { field: 'id', headerName: 'Id', width: 10 },
-    { field: 'nombres', headerName: 'NombreCompañia', flex: 1 },
-    { field: 'contacto', headerName: 'NombreContacto', flex: 1 },
-    { field: 'telefono', headerName: 'Telefono', flex: 1 }, 
-    { field: 'ciudad', headerName: 'Ciudad', flex: 1 }, 
-    {
-      field: 'acciones',
-      headerName: 'Acciones',
-      width: 400,
-      renderCell: (params) => (
-        <Stack direction="row" spacing={1}>
-          <Button
-            startIcon={<Icon>edit</Icon>}
-            variant="contained"
-            style={{ borderRadius: '10px' }}
-            sx={{
-              backgroundColor: '#634A9E',
-              color: 'white',
-              "&:hover": { backgroundColor: '#6e52ae' },
-            }}>
-            Editar
-          </Button>
+      {/*TOAST*/}
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-right',
+        iconColor: 'red',
+        width: 600,
+        heigth: 300,
+        customClass: {
+          popup: 'colored-toast'
+        },
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+      })
+    
+      const Toast2 = Swal.mixin({
+        toast: true,
+        position: 'top-right',
+        iconColor: 'green',
+        customClass: {
+          popup: 'colored-toast'
+        },
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+      })
+    
+       {/* Validaciones de la pantalla de crear*/ }
+       const defaultValues = {
+        nombre: '',
+        contacto: '',
+        telefono: '',
+        ciudad: '',
+      }
+    
+      const accountSchema = yup.object().shape({
+        nombre: yup.string().required('Debe llenar este campo'),
+        contacto: yup.string().required('Debe llenar este campo'),
+        telefono: yup.string().required('Debe llenar este campo'),
+        ciudad: yup.string().required('Debe llenar este campo'),
+      })
+      
+      const { handleSubmit, register, reset, control, watch, formState } = useForm({
+        defaultValues,
+        mode: 'all',
+        resolver: yupResolver(accountSchema),
+      });
+    
+      const { isValid, dirtyFields, errors, touchedFields } = formState;
+      const onSubmit = (data) => {
+        if(data.cargo != null ){
+          if (data.cargo.trim() === '' ) {
+            Toast.fire({
+              icon: 'error',
+              title: 'No se permiten campos vacios',
+            }); 
+          } else {
+    
+            VisibilidadTabla();
+            Toast2.fire({
+              icon: 'success',
+              title: 'Datos guardados exitosamente',
+            });
+            
+          }
+        }else{
+          Toast.fire({
+            icon: 'error',
+            title: 'No se permiten campos vacios',
+          }); 
+        }
+      };
+    
+      const Masiso = () => {
+        const formData = watch();
+        onSubmit(formData); 
+        handleSubmit(onSubmit)(); 
+        reset(defaultValues);
+      };
+      {/* Validaciones de la pantalla de crear*/ }
+    
+    
+      
+      const [filas, setFilas] = React.useState(10);
+    
+      const handleChange = (event) => {
+        setFilas(event.target.value);
+      };
+    
+    {/* Columnas de la tabla */ }
+    const columns = [
+      {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+      },
+      {
+        title: 'Cargo',
+        dataIndex: 'cargo',
+        key: 'cargo',
+        sorter: (a, b) => a.cargo.localeCompare(b.cargo),
+      },
+      {
+        title: 'Acciones',
+        key: 'operation',
+        render: (params) =>
+          <div key={params.id}>
+            <Stack direction="row" spacing={1}>
+              <Button
+                aria-controls={`menu-${params.id}`}
+                aria-haspopup="true"
+                onClick={(e) => handleClick(e, params.id)}
+                variant="contained"
+                style={{ borderRadius: '10px', backgroundColor: '#634A9E', color: 'white' }}
+                startIcon={<Icon>menu</Icon>}
+              >
+                Opciones
+              </Button>
+              <Menu
+                id={`menu-${params.id}`}
+                anchorEl={anchorEl[params.id]}
+                keepMounted
+                open={Boolean(anchorEl[params.id])}
+                onClose={() => handleClose(params.id)}
+              >
+                <MenuItem onClick={() => handleEdit(params.id)}>
+                  <Icon>edit</Icon> Editar
+                </MenuItem>
+                <MenuItem onClick={() => handleDetails(params.id)}>
+                  <Icon>visibility</Icon> Detalles
+                </MenuItem>
+                <MenuItem onClick={() => handleDelete(params.id)}>
+                  <Icon>delete</Icon> Eliminar
+                </MenuItem>
+              </Menu>
+            </Stack>
+          </div>
+        ,
+      },
+    ];
 
-          <Button
-            startIcon={<Icon>visibility</Icon>}
-            variant="contained"
-            color="primary"
-            style={{ borderRadius: '10px' }}
-            sx={{
-              backgroundColor: '#797979', color: 'white',
-              "&:hover": { backgroundColor: '#b69999' },
-            }}
-          >
-            Detalles
-          </Button>
-          <Button
-            startIcon={<Icon>delete</Icon>}
-            variant="contained"
-            color="primary"
-            style={{ borderRadius: '10px' }}
-            sx={{
-              backgroundColor: '#E40F00', color: 'white',
-              "&:hover": { backgroundColor: '#eb5f56' },
-            }}
-            onClick={DialogEliminar}
-          >
-            Eliminar
-          </Button>
-        </Stack>
-      ),
-    },
-  ];
+  // {/* Columnas de la tabla */ }
+  // const columns = [
+  //   { field: 'id', headerName: 'Id', width: 10 },
+  //   { field: 'nombres', headerName: 'NombreCompañia', flex: 1 },
+  //   { field: 'contacto', headerName: 'NombreContacto', flex: 1 },
+  //   { field: 'telefono', headerName: 'Telefono', flex: 1 }, 
+  //   { field: 'ciudad', headerName: 'Ciudad', flex: 1 }, 
+  //   {
+  //     field: 'acciones',
+  //     headerName: 'Acciones',
+  //     width: 400,
+  //     renderCell: (params) => (
+  //       <Stack direction="row" spacing={1}>
+  //         <Button
+  //           startIcon={<Icon>edit</Icon>}
+  //           variant="contained"
+  //           style={{ borderRadius: '10px' }}
+  //           sx={{
+  //             backgroundColor: '#634A9E',
+  //             color: 'white',
+  //             "&:hover": { backgroundColor: '#6e52ae' },
+  //           }}>
+  //           Editar
+  //         </Button>
+
+  //         <Button
+  //           startIcon={<Icon>visibility</Icon>}
+  //           variant="contained"
+  //           color="primary"
+  //           style={{ borderRadius: '10px' }}
+  //           sx={{
+  //             backgroundColor: '#797979', color: 'white',
+  //             "&:hover": { backgroundColor: '#b69999' },
+  //           }}
+  //         >
+  //           Detalles
+  //         </Button>
+  //         <Button
+  //           startIcon={<Icon>delete</Icon>}
+  //           variant="contained"
+  //           color="primary"
+  //           style={{ borderRadius: '10px' }}
+  //           sx={{
+  //             backgroundColor: '#E40F00', color: 'white',
+  //             "&:hover": { backgroundColor: '#eb5f56' },
+  //           }}
+  //           onClick={DialogEliminar}
+  //         >
+  //           Eliminar
+  //         </Button>
+  //       </Stack>
+  //     ),
+  //   },
+  // ];
 
   {/* Datos de la tabla */ }
   const rows = [

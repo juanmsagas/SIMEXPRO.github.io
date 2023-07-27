@@ -1,4 +1,3 @@
-
 /* eslint-disable no-lone-blocks */
 /* eslint-disable prettier/prettier */
 import Card from '@mui/material/Card';
@@ -51,6 +50,55 @@ function CargosIndex() {
   const [mostrarIndex, setmostrarIndex] = useState(true);
   const [mostrarAdd, setmostrarAdd] = useState(false);
   const [Eliminar, setEliminar] = useState(false);
+
+  const [cargo, setCargo] = useState('');
+  const [isCargoValid, setIsCargoValid] = useState(true);
+
+  
+  const handleGuardarClick = () => {
+    let valid = true;
+    if (oficina.trim() === '') {
+      setIsCargoValid(false);
+      valid = false;
+    }
+    if (valid) {
+      // Your logic to save data when all fields are valid
+      // console.log('Data saved!');
+      // Reset the form
+      setCargo('');
+    }
+  };
+
+  const [anchorEl, setAnchorEl] = useState({});
+
+  const handleClick = (event, id) => {
+    setAnchorEl(prevState => ({
+      ...prevState,
+      [id]: event.currentTarget,
+    }));
+  };
+
+  const handleClose = (id) => {
+    setAnchorEl(prevState => ({
+      ...prevState,
+      [id]: null,
+    }));
+  };
+
+  const handleEdit = () => {
+    // Implementa la función para editar aquí
+    handleClose();
+  };
+
+  const handleDetails = () => {
+      // Implementa la función para detalles aquí
+      handleClose();
+  };
+
+  const handleDelete = () => {
+    // Implementa la función para eliminar aquí
+    handleClose();
+  };
 
   const DialogEliminar = () => {
     setEliminar(!Eliminar);
@@ -131,100 +179,121 @@ function CargosIndex() {
   };
   {/* Validaciones de la pantalla de crear*/ }
 
-  {/* Columnas de la tabla */ }
-  const columns = [
-    { field: 'id', headerName: 'Código', width: 300 },
-    { field: 'descripcion', headerName: 'Cargo', width: 400 },     
-    {
-      field: 'acciones',
-      headerName: 'Acciones',
-      width: 400,
-      renderCell: (params) => {
-        const [anchorEl, setAnchorEl] = React.useState(null);
-  
-        const handleClick = (event) => {
-          setAnchorEl(event.currentTarget);
-        };
-  
-        const handleClose = () => {
-          setAnchorEl(null);
-        };
-  
-        const handleEdit = () => {
-          // Implementa la función para editar aquí
-          handleClose();
-        };
-  
-        const handleDetails = () => {
-          // Implementa la función para detalles aquí
-          handleClose();
-        };
-  
-        const handleDelete = () => {
-          // Implementa la función para eliminar aquí
-          handleClose();
-        };
 
   
-        return (
-          <Stack direction="row" spacing={1}>
-            <Button
-              aria-controls={`menu-${params.id}`}
-              aria-haspopup="true"
-              onClick={handleClick}
-              variant="contained"
-              style={{ borderRadius: '10px', backgroundColor: '#634A9E', color: 'white' }}
-              startIcon={<Icon>menu</Icon>}
-            >
-              Opciones
-            </Button>
-            <Menu
-              id={`menu-${params.id}`}
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-            >
-              <MenuItem onClick={handleEdit}>
-                <Icon>edit</Icon> Editar
-              </MenuItem>
-              <MenuItem onClick={handleDetails}>
-                <Icon>visibility</Icon> Detalles
-              </MenuItem>
-              <MenuItem onClick={DialogEliminar}>
-                <Icon>delete</Icon> Eliminar
-              </MenuItem>
-            </Menu>
-          </Stack>
-        );
-      },
-    },
-  ];
+  const [filas, setFilas] = React.useState(10);
+
+  const handleChange = (event) => {
+    setFilas(event.target.value);
+  };
+
+{/* Columnas de la tabla */ }
+const columns = [
+  {
+    title: 'ID',
+    dataIndex: 'id',
+    key: 'id',
+  },
+  {
+    title: 'Cargo',
+    dataIndex: 'cargo',
+    key: 'cargo',
+    sorter: (a, b) => a.cargo.localeCompare(b.cargo),
+  },
+  {
+    title: 'Acciones',
+    key: 'operation',
+    render: (params) =>
+      <div key={params.id}>
+        <Stack direction="row" spacing={1}>
+          <Button
+            aria-controls={`menu-${params.id}`}
+            aria-haspopup="true"
+            onClick={(e) => handleClick(e, params.id)}
+            variant="contained"
+            style={{ borderRadius: '10px', backgroundColor: '#634A9E', color: 'white' }}
+            startIcon={<Icon>menu</Icon>}
+          >
+            Opciones
+          </Button>
+          <Menu
+            id={`menu-${params.id}`}
+            anchorEl={anchorEl[params.id]}
+            keepMounted
+            open={Boolean(anchorEl[params.id])}
+            onClose={() => handleClose(params.id)}
+          >
+            <MenuItem onClick={() => handleEdit(params.id)}>
+              <Icon>edit</Icon> Editar
+            </MenuItem>
+            <MenuItem onClick={() => handleDetails(params.id)}>
+              <Icon>visibility</Icon> Detalles
+            </MenuItem>
+            <MenuItem onClick={() => handleDelete(params.id)}>
+              <Icon>delete</Icon> Eliminar
+            </MenuItem>
+          </Menu>
+        </Stack>
+      </div>
+    ,
+  },
+];
 
 
-  {/* Datos de la tabla */ }
-  const rows = [
-    { id: '1', descripcion: 'Gerentes' },
-    { id: '2', descripcion: 'Supervisor'},
-    { id: '3', descripcion: 'Técnico' },
-    { id: '5', descripcion: 'Administrador'},
-  ];
+  // {/* Datos de la tabla */ }
+  // const rows = [
+  //   { id: '1', descripcion: 'Gerentes' },
+  //   { id: '2', descripcion: 'Supervisor'},
+  //   { id: '3', descripcion: 'Técnico' },
+  //   { id: '5', descripcion: 'Administrador'},
+  // ];
 
-  {/* Función para mostrar la tabla y mostrar agregar */ }
+
+  const defaultCargosValues = {
+    cargos: '',
+  }
+
+  const CargosSchema = yup.object().shape({
+    cargos: yup.string().required(),
+  })
+
+    {/* Datos de la tabla */ }
+    const data = [];
+    for (let i = 0; i < 50; ++i) {
+      data.push({
+        key: i.toString(),
+        id: i.toString(),
+        descripcion : 'cargo ' + i,
+        // tabla: [
+        //   { key: '1', name: 'Value1' + i, platform: 'Value2' + i },
+        //   { key: '2', name: 'Value3' + i, platform: 'Value4' + i },
+        //   // Add more rows to the nested table here...
+        // ],
+      });
+    }
+
+    const handleSearchChange = (event) => {
+      setSearchText(event.target.value);
+    };
+  
+    {/* Filtrado de datos */ }
+    const filteredRows = data.filter((row) =>
+      Object.values(row).some((value) =>
+        typeof value === 'string' && value.toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
+  
   const VisibilidadTabla = () => {
     setmostrarIndex(!mostrarIndex);
     setmostrarAdd(!mostrarAdd);
-    reset(defaultValues);
   };
 
-  const handleSearchChange = (event) => {
-    setSearchText(event.target.value);
+  const VisibilidadTabla2 = () => {
+    setmostrarIndex(!mostrarIndex);
+    setmostrarAdd(!mostrarAdd);
+    reset(defaultOficinasValues);
   };
 
-  {/* Filtrado de datos */ }
-  const filteredRows = rows.filter((row) =>
-    row.descripcion.toLowerCase().includes(searchText.toLowerCase())
-  );
 
   return (
     <Card sx={{ minWidth: 275, margin: '40px' }}>
@@ -234,7 +303,7 @@ function CargosIndex() {
         image="https://i.ibb.co/J2xKpCp/CARGOS.png"
         alt="Encabezado de la carta"
       />
-      <Collapse in={mostrarIndex}>
+       <Collapse in={mostrarIndex}>
         <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
 
           {/* Botón de Nuevo */}
@@ -254,24 +323,43 @@ function CargosIndex() {
             </Button>
           </Stack>
 
-          {/* Barra de Busqueda en la Tabla */}
-          <TextField
-            style={{ borderRadius: '10px' }}
-            placeholder='Buscar'
-            value={searchText}
-            onChange={handleSearchChange}
-            size="small"
-            variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IconButton edge="start">
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
+          <Stack direction="row" spacing={1}>
+            <label className='mt-8'>Filas por página:</label>
+            <FormControl sx={{ minWidth: 50 }} size="small">
+              {/* <InputLabel id="demo-select-small-label">Filas</InputLabel> */}
+              <Select
+                labelId="demo-select-small-label"
+                id="demo-select-small"
+                value={filas}
+                // label="Filas"  
+                onChange={handleChange}
+              >
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={20}>20</MenuItem>
+                <MenuItem value={30}>30</MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* Barra de Busqueda en la Tabla */}
+            <TextField
+              style={{ borderRadius: '10px' }}
+              placeholder='Buscar'
+              value={searchText}
+              onChange={handleSearchChange}
+              size="small"
+              variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton edge="start">
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+          </Stack>
         </CardContent>
       </Collapse>
 
@@ -279,21 +367,21 @@ function CargosIndex() {
 
       {/* Tabla */}
       <Collapse in={mostrarIndex}>
-        <div style={{ height: 400, width: '100%', marginLeft: '20px', marginRight: '20px' }}>
-          <DataGrid
-            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-            components={{
-              Toolbar: GridToolbar,
-              Search: SearchIcon,
-            }}
-            rows={filteredRows}
+        <div className='center' style={{ width: '95%', margin: 'auto' }}>
+
+          <Table
             columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 10 },
-              },
+            // expandable={{
+            //   expandedRowRender: (record) => <Table columns={columns} dataSource={record.tabla} pagination={false} />,
+            //   rowExpandable: (record) => record.name !== 'Not Expandable',
+            // }}
+            dataSource={filteredRows}
+            size="small"
+            pagination={{
+              pageSize: filas
+              , className: 'decoration-white'
             }}
-            pageSizeOptions={[10, 20, 50]}
+
           />
         </div>
       </Collapse>
