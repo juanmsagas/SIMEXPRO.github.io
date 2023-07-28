@@ -468,6 +468,7 @@ function EmpleadosIndex() {
               >
                 <InputLabel htmlFor="grouped-native-select">Estados Civiles</InputLabel>
                 <Select
+                
                   style={{ borderRadius: '3px' }}
                   label="Estado Civil"
                 />

@@ -120,7 +120,7 @@ a[role=button] {
 }
 
 form label {
-    z-index: 99;
+    z-index: 999999999999999999
 }
 
 body.no-animate *,

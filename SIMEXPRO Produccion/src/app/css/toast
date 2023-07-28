@@ -1,0 +1,4 @@
+.custom-toast {
+  margin-top: 100px;
+  z-index: 9999;
+}

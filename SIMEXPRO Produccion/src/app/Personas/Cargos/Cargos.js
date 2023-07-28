@@ -42,6 +42,11 @@ import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
+
+
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function CargosIndex() {
   const [searchText, setSearchText] = useState('');
   const [mostrarIndex, setmostrarIndex] = useState(true);
@@ -52,7 +57,7 @@ function CargosIndex() {
     setEliminar(!Eliminar);
   };
 
-    {/*TOAST*/}
+  {/*TOAST*/ }
   const Toast = Swal.mixin({
     toast: true,
     position: 'top-right',
@@ -79,15 +84,15 @@ function CargosIndex() {
     timerProgressBar: true
   })
 
-   {/* Validaciones de la pantalla de crear*/ }
-   const defaultValues = {
+  {/* Validaciones de la pantalla de crear*/ }
+  const defaultValues = {
     cargo: '',
   }
 
   const accountSchema = yup.object().shape({
-    cargo: yup.string().required('Debe llenar este campo'),
+    cargo: yup.string().required(''),
   })
-  
+
   const { handleSubmit, register, reset, control, watch, formState } = useForm({
     defaultValues,
     mode: 'all',
@@ -95,34 +100,37 @@ function CargosIndex() {
   });
 
   const { isValid, dirtyFields, errors, touchedFields } = formState;
-  const onSubmit = (data) => {
-    if(data.cargo != null ){
-      if (data.cargo.trim() === '' ) {
-        Toast.fire({
-          icon: 'error',
-          title: 'No se permiten campos vacios',
-        }); 
-      } else {
 
-        VisibilidadTabla();
-        Toast2.fire({
-          icon: 'success',
-          title: 'Datos guardados exitosamente',
-        });
-        
-      }
-    }else{
-      Toast.fire({
-        icon: 'error',
-        title: 'No se permiten campos vacios',
-      }); 
+  const onSubmit = (data) => {
+    if (data.cargo === '') {
+      toast.error('Debe completar los campos.', {
+        theme: 'dark',
+        //  position: toast.POSITION.BOTTOM_RIGHT
+        style: {
+          marginTop: '50px'
+        },
+        autoClose: 1500,
+        closeOnClick: true
+      });   
+    }
+    else {
+      toast.success('Datos ingresados correctamente.', {
+        theme: 'dark',
+        //  position: toast.POSITION.BOTTOM_RIGHT
+        style: {
+          marginTop: '50px'
+        },
+        autoClose: 1500,
+        closeOnClick: true
+      });   
+      VisibilidadTabla();
     }
   };
 
   const Masiso = () => {
     const formData = watch();
-    onSubmit(formData); 
-    handleSubmit(onSubmit)(); 
+    onSubmit(formData);
+    handleSubmit(onSubmit)();
     reset(defaultValues);
   };
   {/* Validaciones de la pantalla de crear*/ }
@@ -130,38 +138,38 @@ function CargosIndex() {
   {/* Columnas de la tabla */ }
   const columns = [
     { field: 'id', headerName: 'Código', width: 300 },
-    { field: 'descripcion', headerName: 'Cargo', width: 400 },     
+    { field: 'descripcion', headerName: 'Cargo', width: 400 },
     {
       field: 'acciones',
       headerName: 'Acciones',
       width: 400,
       renderCell: (params) => {
         const [anchorEl, setAnchorEl] = React.useState(null);
-  
+
         const handleClick = (event) => {
           setAnchorEl(event.currentTarget);
         };
-  
+
         const handleClose = () => {
           setAnchorEl(null);
         };
-  
+
         const handleEdit = () => {
           // Implementa la función para editar aquí
           handleClose();
         };
-  
+
         const handleDetails = () => {
           // Implementa la función para detalles aquí
           handleClose();
         };
-  
+
         const handleDelete = () => {
           // Implementa la función para eliminar aquí
           handleClose();
         };
 
-  
+
         return (
           <Stack direction="row" spacing={1}>
             <Button
@@ -201,9 +209,9 @@ function CargosIndex() {
   {/* Datos de la tabla */ }
   const rows = [
     { id: '1', descripcion: 'Gerentes' },
-    { id: '2', descripcion: 'Supervisor'},
+    { id: '2', descripcion: 'Supervisor' },
     { id: '3', descripcion: 'Técnico' },
-    { id: '5', descripcion: 'Administrador'},
+    { id: '5', descripcion: 'Administrador' },
   ];
 
   {/* Función para mostrar la tabla y mostrar agregar */ }
@@ -224,6 +232,7 @@ function CargosIndex() {
 
   return (
     <Card sx={{ minWidth: 275, margin: '40px' }}>
+        <ToastContainer />
       <CardMedia
         component="img"
         height="200"
@@ -301,27 +310,26 @@ function CargosIndex() {
           <Grid container spacing={3}>
 
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-            <div className="mt-48 mb-16">
+              <div className="mt-48 mb-16">
                 <Controller
                   render={({ field }) => (
                     <TextField
                       {...field}
                       variant="outlined"
                       fullWidth
-                      defaultValue=" "
-                        style={{ borderRadius: '10px', width: '500px' }}
-                        label="Cargo"
-                        placeholder='Descripción del cargo'
-                        error={!!errors.cargo}
-                        helperText={errors?.cargo?.message}
-                        InputProps={{startAdornment: (<InputAdornment position="start"></InputAdornment>),}}
+                      style={{ borderRadius: '10px', width: '500px' }}
+                      label="Cargo"
+                      placeholder='Descripción del cargo'
+                      error={!!errors.cargo}
+                      helperText={errors?.cargo?.message}
+                      InputProps={{ startAdornment: (<InputAdornment position="start"></InputAdornment>), }}
                     />
                   )}
                   name="cargo"
                   control={control}
                 />
               </div>
-            </Grid>      
+            </Grid>
 
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'right', alignItems: 'right' }} >
               <Button
@@ -370,43 +378,44 @@ function CargosIndex() {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-          ¿Está seguro(a) que desea eliminar este registro?
+            ¿Está seguro(a) que desea eliminar este registro?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'right', alignItems: 'right' }} >
-              <Button
-                startIcon={<Icon>checked</Icon>}
-                variant="contained"
-                color="primary"
-                style={{ borderRadius: '10px', marginRight: '10px' }}
-                sx={{
-                  backgroundColor: '#634A9E', color: 'white',
-                  "&:hover": { backgroundColor: '#6e52ae' },
-                }}
-                onClick={DialogEliminar}
-              >
-                Eliminar
-              </Button>
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'right', alignItems: 'right' }} >
+            <Button
+              startIcon={<Icon>checked</Icon>}
+              variant="contained"
+              color="primary"
+              style={{ borderRadius: '10px', marginRight: '10px' }}
+              sx={{
+                backgroundColor: '#634A9E', color: 'white',
+                "&:hover": { backgroundColor: '#6e52ae' },
+              }}
+              onClick={DialogEliminar}
+            >
+              Eliminar
+            </Button>
 
-              <Button
-                startIcon={<Icon>close</Icon>}
-                variant="contained"
-                color="primary"
-                style={{ borderRadius: '10px' }}
-                sx={{
-                  backgroundColor: '#DAD8D8', color: 'black',
-                  "&:hover": { backgroundColor: '#BFBABA' },
-                }}
-                onClick={DialogEliminar}
-              >
-                Cancelar
-              </Button>
-            </Grid>
+            <Button
+              startIcon={<Icon>close</Icon>}
+              variant="contained"
+              color="primary"
+              style={{ borderRadius: '10px' }}
+              sx={{
+                backgroundColor: '#DAD8D8', color: 'black',
+                "&:hover": { backgroundColor: '#BFBABA' },
+              }}
+              onClick={DialogEliminar}
+            >
+              Cancelar
+            </Button>
+          </Grid>
         </DialogActions>
       </Dialog>
-
+      <ToastContainer />
     </Card>
+
   );
 }
 
